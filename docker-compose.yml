@@ -1,0 +1,7 @@
+services:
+  gridcraft-web:
+    image: ghcr.io/mikapst/gridcraft-web:latest
+    container_name: gridcraft-web
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
