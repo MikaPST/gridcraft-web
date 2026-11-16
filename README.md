@@ -1,80 +1,69 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/storytold/gridcraft/main/assets/app-icon/hicolor/256x256/apps/ai.storyteller.gridcraft.png" width="128" height="128" alt="GridCraft icon">
+  <img src="https://raw.githubusercontent.com/storytold/gridcraft/main/assets/app-icon/hicolor/256x256/apps/ai.storyteller.gridcraft.png" width="128" height="128" alt="GridCraft application icon">
 </p>
 
 <h1 align="center">GridCraft Web — Docker Image</h1>
 <p align="center">
-  A self-hosted browser build of GridCraft, an open-source spreadsheet application written in Rust.
+  A community-maintained Docker image for
+  <a href="https://github.com/storytold/gridcraft">GridCraft</a>,
+  bringing its browser-based spreadsheet editor to a self-hosted web interface.
   <br>
-  Packaged as a static web application and published to GitHub Container Registry.
+  Automated official-release builds and publication to GitHub Container Registry (GHCR).
 </p>
+
 <p align="center">
-  <a href="https://github.com/MikaPST/gridcraft-web/actions/workflows/publish-image.yml">
-    <img src="https://github.com/MikaPST/gridcraft-web/actions/workflows/publish-image.yml/badge.svg" alt="Build and publish GridCraft Web">
-  </a>
-  <a href="https://github.com/MikaPST/gridcraft-web/releases/latest">
-    <img src="https://img.shields.io/github/v/release/MikaPST/gridcraft-web?label=Release&logo=github&color=blue" alt="Latest Release">
-  </a>
-  <a href="https://github.com/MikaPST/gridcraft-web/pkgs/container/gridcraft-web">
-    <img src="https://ghcr-badge.egpl.dev/mikapst/gridcraft-web/latest_tag?trim=major&label=GHCR" alt="GHCR image tag">
-  </a>
-  <a href="docker-compose.yml">
-    <img src="https://img.shields.io/badge/Docker%20Compose-ready-2496ED?logo=docker&logoColor=white" alt="Docker Compose configuration">
-  </a>
+  <a href="https://github.com/MikaPST/gridcraft-web/actions/workflows/publish-image.yml"><img src="https://github.com/MikaPST/gridcraft-web/actions/workflows/publish-image.yml/badge.svg" alt="Build and publish GridCraft Web"></a>
+  <a href="https://github.com/MikaPST/gridcraft-web/releases/latest"><img src="https://img.shields.io/github/v/release/MikaPST/gridcraft-web?label=Release&logo=github&color=blue" alt="Latest Release"></a>
+  <a href="https://github.com/MikaPST/gridcraft-web/pkgs/container/gridcraft-web"><img src="https://ghcr-badge.egpl.dev/mikapst/gridcraft-web/latest_tag?trim=major&label=GHCR" alt="GHCR image tag"></a>
+  <a href="docker-compose.yml"><img src="https://img.shields.io/badge/Docker%20Compose-ready-2496ED?logo=docker&logoColor=white" alt="Docker Compose configuration"></a>
 </p>
 
 ---
 
 ## Why this repository?
 
-This repository provides a Docker image for the official [GridCraft](https://github.com/storytold/gridcraft) web application.
+The official GridCraft project provides a WebAssembly-based spreadsheet editor that can be hosted as a static website. This repository packages the browser application into a Docker image for convenient self-hosting.
 
-The goal is to make GridCraft easy to deploy on a self-hosted server such as Unraid, without having to build the application manually.
+The goals are to:
 
-- Publish a matching GitHub Release only after the Docker build and push succeed.
-- Build the web application directly from the official upstream repository.
-- Automatically publish the resulting Docker image to GitHub Container Registry (GHCR).
-- Rebuild periodically to follow upstream changes.
-- Provide a simple Docker Compose configuration.
-- Make the image suitable for Unraid and other Docker environments.
-- Keep the Docker packaging separate from the upstream application.
+- Build the official GridCraft web application from the exact upstream release tag.
+- Publish ready-to-run Docker images to GHCR for both AMD64 and ARM64.
+- Check for new official releases daily and publish corresponding versioned images.
+- Create a matching GitHub Release **only after** the Docker image has been published.
+- Offer a simple Docker Compose configuration and support Unraid deployments.
+- Maintain Docker, NGINX and workflow configuration independently of upstream.
+- Preserve upstream license, attribution and third-party asset notices in the image.
 
-This repository is a packaging project only. It is not a fork of GridCraft and does not modify the upstream source code.
+This is a packaging and distribution project, **not** a fork intended to develop a separate spreadsheet editor.
 
 ## How it works
 
-GridCraft is an open-source spreadsheet application written in Rust. Its web version runs in a modern browser through WebAssembly and uses the same application interface as the desktop version.
+GridCraft is an open-source spreadsheet editor built in Rust. Its browser application uses WebAssembly and serves a familiar spreadsheet interface with formulas, formatting, tables, charts and workbook import/export.
 
-GridCraft is designed for spreadsheet workflows, with XLSX as its native format, alongside CSV and TSV support. It includes formulas, formatting, tables, charts, sorting, filtering and pivot tables. The project is in alpha, and compatibility and feature depth are still evolving.
+- **Browser-based spreadsheets:** open XLSX, CSV and TSV files through the browser, with additional format support depending on the upstream release.
+- **Local workbook handling:** opening uses the browser's file picker or drag-and-drop; saving and exporting trigger browser downloads.
+- **Static application:** NGINX serves the compiled HTML, JavaScript, WebAssembly and assets. It does not provide a server-side spreadsheet engine or user accounts.
+- **Self-hosted:** access GridCraft on your own server, over a local network or a properly configured HTTPS reverse proxy.
 
-The Docker image:
-
-- Serves the prebuilt GridCraft web application as static files using NGINX.
-- Does not run a desktop session or remote desktop.
-- Does not add a server-side spreadsheet engine or processing backend.
-- Does not provide server-side user accounts or centralized workbook storage.
-
-Opening a workbook uses the browser's file picker (drag and drop is also supported). Saving a workbook triggers a browser download. Browser storage may be used by the application for preferences or other local state, but it is not a Docker-hosted workbook volume.
+The upstream desktop CLI, MCP server and control channel are not deployed as services by this image. Browser integration features, where available, are part of the upstream web application.
 
 ## Docker image
 
-The image is published on GitHub Container Registry:
+The image is published to GitHub Container Registry:
 
 ```text
 ghcr.io/mikapst/gridcraft-web:latest
 ```
 
-Each official upstream release is also published under its exact version tag, for example:
+Each official upstream release is also published under its original version tag, for example:
 
 ```text
-ghcr.io/mikapst/gridcraft-web:vX.Y.Z
+ghcr.io/mikapst/gridcraft-web:v0.15.1
 ```
-
-Use a versioned tag if you want to keep a deployment on a specific release. The `latest` tag updates when an image is published.
 
 ### Option 1 — Docker Compose (recommended)
 
-Create a `docker-compose.yml` file:
+A `docker-compose.yml` file is included at the repository root:
 
 ```yaml
 services:
@@ -86,52 +75,35 @@ services:
     restart: unless-stopped
 ```
 
-Start the container:
+Start the application:
 
 ```bash
 docker compose up -d
 ```
 
-Open GridCraft in your browser:
-
-```text
-http://YOUR_SERVER_IP:8080
-```
+Open `http://YOUR_SERVER_IP:8080` (or `http://localhost:8080` when Docker runs on your own computer).
 
 #### Useful Compose commands
 
-View container logs:
-
 ```bash
+# Follow application logs
 docker compose logs -f
-```
 
-Update the image:
-
-```bash
+# Update to the newest published image
 docker compose pull
 docker compose up -d
-```
 
-Stop and remove the container:
-
-```bash
+# Stop and remove the container
 docker compose down
 ```
 
-The container listens on port `8080`. No volume or environment variable is required by this static web image.
+No `.env` file or persistent volume is required. To change the host port, modify the left side of the mapping, for example `8081:8080`.
 
 ### Option 2 — Run directly with Docker
 
-Pull the image:
-
 ```bash
 docker pull ghcr.io/mikapst/gridcraft-web:latest
-```
 
-Run the container:
-
-```bash
 docker run -d \
   --name gridcraft-web \
   --restart unless-stopped \
@@ -139,97 +111,128 @@ docker run -d \
   ghcr.io/mikapst/gridcraft-web:latest
 ```
 
-Then open:
-
-```text
-http://YOUR_SERVER_IP:8080
-```
+Open `http://YOUR_SERVER_IP:8080`. Optional CPU and memory limits may be configured with Docker if required.
 
 ### Network access and reverse proxies
 
-The container exposes an HTTP service on port `8080`.
+The container listens on HTTP port `8080`. Use a reverse proxy such as Traefik for HTTPS and avoid exposing unencrypted HTTP directly to the public Internet.
 
-You can place it behind a reverse proxy such as Traefik or NGINX Proxy Manager to access it through a domain name and HTTPS.
+**WebGPU and clipboard access require a secure context**, normally HTTPS or localhost. On non-secure origins GridCraft can fall back to WebGL2. The app does not require cross-origin isolation headers such as COOP/COEP. Its iframe host bridge has additional same-origin and sandbox requirements; refer to upstream documentation before embedding it in another site.
 
-For public access, use HTTPS through a reverse proxy rather than exposing the unencrypted HTTP endpoint directly to the Internet.
+## Repository structure
 
-The server must serve `.wasm` files with the `application/wasm` MIME type. The included NGINX configuration sets this through the standard NGINX MIME types.
+The repository versions its own Docker packaging and retrieves the official application source only during CI builds.
 
-If GridCraft is embedded in a sandboxed iframe, the hosting page must allow scripts, same-origin access and downloads; otherwise browser storage or workbook exports may be blocked.
+```text
+gridcraft-web/
+├── .github/
+│   └── workflows/
+│       └── publish-image.yml
+├── .dockerignore
+├── Dockerfile
+├── nginx.conf
+├── docker-compose.yml
+└── README.md
+```
+
+| File | Purpose |
+|---|---|
+| `Dockerfile` | Defines the unprivileged NGINX runtime image, OCI metadata and health check. |
+| `nginx.conf` | Serves WebAssembly, compressed assets, hashed-file caching, security headers and `/healthz`. |
+| `.dockerignore` | Restricts the image build context to the generated site, legal notices and configuration. |
+| `docker-compose.yml` | Defines the ready-to-use Compose deployment. |
+| `.github/workflows/publish-image.yml` | Detects upstream releases, builds WebAssembly, publishes multi-platform GHCR images and creates GitHub Releases. |
+| `README.md` | Documents deployment, architecture, automation and attribution. |
+
+### Docker build architecture
+
+GridCraft's official web build uses **Rust, WebAssembly and Trunk**. The upstream `apps/gridcraft-web/Trunk.toml` defines `../../dist/web` as its output directory and uses relative URLs.
+
+The build process follows these steps:
+
+1. GitHub Actions resolves the latest published official GridCraft release or a manually selected upstream tag.
+2. It checks out that exact upstream source release into `upstream/`.
+3. Rust, the `wasm32-unknown-unknown` target and Trunk are installed.
+4. The official application is compiled from `upstream/apps/gridcraft-web` using `trunk build --release --dist ../../dist/web --public-url ./`.
+5. The workflow validates `upstream/dist/web/index.html`, generated JavaScript and WebAssembly files, and checks for root-absolute URLs.
+6. The static site, the version-controlled `Dockerfile`, `nginx.conf` and `.dockerignore`, plus available upstream legal notices, are assembled in `image-context/`.
+7. Docker Buildx publishes the NGINX runtime image to GHCR for `linux/amd64` and `linux/arm64`.
+8. A matching GitHub Release is created or updated **only after** the multi-platform image is successfully published.
+
+The application is compiled once and packaged into both container architectures. No database, server-side workbook volume, GPU passthrough or remote desktop is required.
+
+The runtime uses an unprivileged NGINX user, exposes `/healthz`, serves `.wasm` with its required MIME type, and revalidates `index.html`. Content-hashed assets can be cached immutably.
+
+> [!NOTE]
+> Upstream Rust, Trunk, dependencies or build-path changes may require packaging adjustments. Static checks do not replace a successful GitHub Actions build.
 
 ## Automated builds
 
-GitHub Actions checks the official [GridCraft releases](https://github.com/storytold/gridcraft/releases), builds the WebAssembly application from the selected upstream tag and publishes the image to GHCR.
+GitHub Actions checks official GridCraft releases every day.
 
 | Trigger | Behaviour |
 |---|---|
-| Weekly schedule | Checks the latest official GridCraft release and builds it if it has not already been published here |
-| Manual workflow dispatch | Builds the latest official release, or a specified `upstream_tag` |
-| Force rebuild | Rebuilds an already published version with `force_rebuild: true` |
-| Changes to packaging files on `main` | Rebuilds the current official upstream release with the updated workflow |
+| Daily schedule | Checks the latest official release and builds it if it has not already been published here |
+| Manual workflow dispatch | Builds the latest release or the specified official upstream tag |
+| Force rebuild | Rebuilds an existing version and updates its image and GitHub Release |
+| Packaging changes on `main` | Rebuilds the latest official release when version-controlled packaging or documentation changes |
 
 ### Published tags
 
-- `latest` — the latest successfully published image (mutable tag).
-- `<upstream-version>` — the exact official upstream tag, for example `vX.Y.Z`.
-- `upstream-<commit>` — the upstream source commit used for the image (first 12 hexadecimal characters).
+Each successful build publishes:
 
-The image targets both `linux/amd64` and `linux/arm64`. The workflow checks out **the official upstream release tag**, rather than compiling `main` as the versioned source.
+- `latest` — most recently packaged official GridCraft release.
+- `<upstream-version>` — the exact official release tag, for example `v0.15.1`.
+- `upstream-<commit>` — the first 12 characters of the upstream source commit.
+
+Images are published for `linux/amd64` and `linux/arm64`.
 
 ### GitHub Releases
 
-After a successful Docker build and GHCR push, the workflow creates or updates a [GitHub Release](https://github.com/MikaPST/gridcraft-web/releases) matching the upstream tag. It includes the upstream release notes, source link and commit, Docker tags, supported architectures and (when available) the published image digest.
+After the Docker image is successfully pushed to GHCR, the workflow creates or updates a [GitHub Release](https://github.com/MikaPST/gridcraft-web/releases) matching the upstream version.
 
-The Release badge at the top of this README updates automatically. Scheduled runs skip versions already released here. You can force a rebuild from **Actions → Build and publish GridCraft Web → Run workflow**.
+Each release includes the official upstream release link and notes, source revision, Docker tags, supported architectures, image digest and build provenance.
+
+The **Release** badge at the top of this README displays the latest GitHub Release. Scheduled runs skip already published versions. To rebuild, open **Actions → Build and publish GridCraft Web → Run workflow** and enable `force_rebuild`.
 
 > [!IMPORTANT]
-> A GitHub Release is created only after the Docker image has been successfully published. The `latest` tag may change after a rebuild; pin a versioned image tag for a stable deployment. Auxiliary source repositories (for example `craft-fonts`) may be checked out separately and are not necessarily pinned to the upstream release commit.
+> A GitHub Release is created **only after** a successful GHCR image push. `latest` is mutable; forced rebuilds can also update versioned tags. Pin an image digest when exact reproducibility is required.
 
 ## Unraid Community Applications
 
-This image can be used with Unraid through Docker Compose or a Community Applications template.
+GridCraft Web is suitable for Unraid Docker deployments. The Community Applications template is maintained separately from this repository:
 
-The Unraid template is maintained separately in the [MikaPST/unraid-community-apps](https://github.com/MikaPST/unraid-community-apps) repository.
+- **Unraid Community Applications repository:** [MikaPST/unraid-community-apps](https://github.com/MikaPST/unraid-community-apps)
+- **GridCraft Web template:** [gridcraft-web.xml](https://github.com/MikaPST/unraid-community-apps/blob/main/templates/gridcraft-web.xml)
+- **Docker image:** `ghcr.io/mikapst/gridcraft-web:latest`
+- **Container port:** `8080`
 
-This repository contains the Docker image build and publication workflow; the Community Applications repository contains the Unraid-specific template.
-- **Template:** [gridcraft-web.xml](https://github.com/MikaPST/unraid-community-apps/blob/main/templates/gridcraft-web.xml)
+The Docker image does not store workbooks in Unraid `appdata`; workbook files are handled in the browser.
 
 ## Upstream project
 
-**GridCraft** is an open-source spreadsheet application written in Rust, designed as a modern alternative for spreadsheet workflows.
+GridCraft is an open-source, clean-room spreadsheet application developed by the ArtCraft team and its contributors.
 
-Its capabilities include:
-
-- XLSX as the native workbook format, with CSV and TSV support.
-- Formula calculation with a large worksheet function library.
-- Cell formatting, conditional formatting, tables and data validation.
-- Charts, sparklines, pictures, links and comments.
-- Sorting, filtering, outlining, subtotals and pivot tables.
-- Browser-based workbook opening and download-based saving.
-
-The upstream project also provides native desktop applications, a command-line interface and MCP/control-channel integrations. These are not included in this Docker image, which packages only the browser-based WebAssembly application.
-
-- **Source code:** [github.com/storytold/gridcraft](https://github.com/storytold/gridcraft)
+- **Source code:** [storytold/gridcraft](https://github.com/storytold/gridcraft)
 - **Official website:** [getartcraft.com/apps/gridcraft](https://getartcraft.com/apps/gridcraft)
-- **Releases:** [GitHub Releases](https://github.com/storytold/gridcraft/releases)
-- **Web hosting guide:** [Hosting GridCraft for the web](https://github.com/storytold/gridcraft/blob/main/packaging/web/README.md)
+- **Official web hosting guide:** [Hosting GridCraft for the web](https://github.com/storytold/gridcraft/blob/main/packaging/web/README.md)
+- **Official releases:** [GridCraft releases](https://github.com/storytold/gridcraft/releases)
 
-This repository packages the upstream web application for Docker. It does not modify the upstream application.
-
-The MikaPST GitHub Release tracks the upstream version but represents independent Docker packaging, not an official GridCraft distribution.
+This repository publishes independent Docker packaging built from the official upstream release, not an official GridCraft distribution.
 
 ## License and attribution
 
-GridCraft is dual-licensed under **MIT** or **Apache-2.0**, at your option. Copyright and required notices are maintained by the upstream project in its `NOTICE` file.
+GridCraft is dual-licensed under the **MIT License or Apache License 2.0**, at the user's option. Upstream copyright and attribution notices must be preserved.
 
-Bundled assets, if any, may have their own licenses. Their authors, sources and licenses are documented in the upstream `ATTRIBUTION.md`.
+- [Upstream MIT License](https://github.com/storytold/gridcraft/blob/main/LICENSE-MIT)
+- [Upstream Apache License 2.0](https://github.com/storytold/gridcraft/blob/main/LICENSE-APACHE)
+- [Upstream NOTICE](https://github.com/storytold/gridcraft/blob/main/NOTICE)
+- [Upstream asset attributions](https://github.com/storytold/gridcraft/blob/main/ATTRIBUTION.md)
 
-The GridCraft and ArtCraft names, logos and related brand assets are trademarks of the upstream project and are not covered by the software license. Refer to the upstream brand guidelines before reusing them.
+The workflow copies upstream license and attribution files, into the published runtime image. The upstream software licenses do not automatically determine the license of independently maintained packaging files; consult this repository's own license if present.
 
-The Docker packaging files in this repository are provided separately from the upstream application. Refer to the upstream repository for the complete license texts, notices and asset attributions.
+GridCraft, ArtCraft, their logos and trademarks remain the property of their respective owners. This project is community-maintained and is **not affiliated with or endorsed by** the official maintainers.
 
 ## Disclaimer
 
-This is an independent community packaging project and is not affiliated with, endorsed by, or supported by the ArtCraft team.
-
-All product names, trademarks and logos are the property of their respective owners.
+GridCraft is under active development. Features, browser compatibility, import/export fidelity and behavior may change between releases. Keep backups of important workbooks and test new versions before relying on them for critical work.
